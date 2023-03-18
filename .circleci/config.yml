@@ -3,25 +3,25 @@ orbs:
   slack: circleci/slack@4.1
 
 commands:
-  install_ansible:
-    description: Install Ansible
-    steps:
-      - run:
-          name: Install ansible
-          command: |
-            sudo apt update
-            sudo apt install software-properties-common -yy less
-            sudo add-apt-repository --yes --update ppa:ansible/ansible
-            sudo apt install ansible -y
+  # install_ansible:
+  #   description: Install Ansible
+  #   steps:
+  #     - run:
+  #         name: Install ansible
+  #         command: |
+  #           sudo apt update
+  #           sudo apt install software-properties-common -yy less
+  #           sudo add-apt-repository --yes --update ppa:ansible/ansible
+  #           sudo apt install ansible -y
   
-  install_nodejs:
-    description: Install Nodejs 13
-    steps:
-      - run:
-          name: Install NodeJS 13
-          command: |
-            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-            sudo apt install -y nodejs
+  # install_nodejs:
+  #   description: Install Nodejs 13
+  #   steps:
+  #     - run:
+  #         name: Install NodeJS 13
+  #         command: |
+  #           curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+  #           sudo apt install -y nodejs
   
   install_awscli:
     description: Install AWSCLI
@@ -174,9 +174,9 @@ jobs:
     docker:
       - image: cimg/base:stable
     steps:
-      # Checkout code from git
+      
       - checkout
-      - install_awscli:
+      - install_awscli
       - run: 
           name: Install dependencies tar, gzip
           command: |
