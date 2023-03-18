@@ -180,8 +180,8 @@ jobs:
       - run: 
           name: Install dependencies tar, gzip
           command: |
-            sudo apt install -y tar gzip
-            sudo apt install -y tar gzip
+            yum install -y tar gzip
+            # sudo apt install -y tar gzip
             # sudo apt  install python3.7
             # curl -O https://bootstrap.pypa.io/get-pip.py
             # python3 get-pip.py --user
@@ -217,23 +217,23 @@ jobs:
       - destroy-environment
             
 
-  configure-infrastructure:
-    docker:
-      # Docker image here that supports Ansible
-    steps:
-      # Checkout code from git
-      # Add ssh keys with fingerprint
-      # attach workspace
-      - run:
-          name: Install dependencies
-          command: |
-            # Your code here
-            exit 1
-      - run:
-          name: Configure server
-          command: |
-            # Your code here
-            exit 1
+  # configure-infrastructure:
+  #   docker:
+  #     # Docker image here that supports Ansible
+  #   steps:
+  #     # Checkout code from git
+  #     # Add ssh keys with fingerprint
+  #     # attach workspace
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           # Your code here
+  #           exit 1
+  #     - run:
+  #         name: Configure server
+  #         command: |
+  #           # Your code here
+  #           exit 1
       # Here's where you will add some code to rollback on failure      
 
   # run-migrations:
