@@ -145,7 +145,10 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - run: apt install -y tar gzip
+      - run: 
+          name: Install dependencies tar, gzip
+          command: |
+            sudo apt install -y tar gzip
       - run:
           name: Ensure back-end infrastructure exists
           command: |
