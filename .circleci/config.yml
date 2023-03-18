@@ -228,9 +228,9 @@ jobs:
       - install_awscli
       - run:
           name: Configure server
-          # working_directory: .circleci/ansible
+          working_directory: .circleci/ansible
           command: |
-            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/configure-server.yml
+            ansible-playbook -i inventory.txt configure-server.yml
            
       # Here's where you will add some code to rollback on failure      
       - destroy-environment
@@ -432,12 +432,12 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
-      # - deploy-frontend:
-      #     requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
       #     requires: [smoke-test]
       # - cleanup:
