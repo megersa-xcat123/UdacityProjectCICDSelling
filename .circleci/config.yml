@@ -242,7 +242,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - instal_awscli
+      - install_awscli
       - install_nodejs
       - run:
           name: Run migrations
@@ -253,7 +253,6 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
-            # Your code here
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
              curl --insecure https://kvdb.io/${KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7} -D '1'
