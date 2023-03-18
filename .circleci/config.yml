@@ -180,11 +180,10 @@ jobs:
       - run: 
           name: Install dependencies tar, gzip
           command: |
-            yum install -y tar gzip
-            # sudo apt install -y tar gzip
-            # sudo apt  install python3.7
-            # curl -O https://bootstrap.pypa.io/get-pip.py
-            # python3 get-pip.py --user
+            sudo apt install -y tar gzip
+          # sudo apt  install python3.7
+          # curl -O https://bootstrap.pypa.io/get-pip.py
+          # python3 get-pip.py --user
       - run:
           name: Ensure back-end infrastructure exists
           command: |
