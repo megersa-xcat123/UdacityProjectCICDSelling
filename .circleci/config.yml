@@ -3,16 +3,16 @@ orbs:
   slack: circleci/slack@4.1
 
 commands:
-  # install_ansible:
-  #   description: Install Ansible
-  #   steps:
-  #     - run:
-  #         name: Install ansible
-  #         command: |
-  #           sudo apt update
-  #           sudo apt install software-properties-common -yy less
-  #           sudo add-apt-repository --yes --update ppa:ansible/ansible
-  #           sudo apt install ansible -y
+  install_ansible:
+    description: Install Ansible
+    steps:
+      - run:
+          name: Install ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -yy less
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
   
   # install_nodejs:
   #   description: Install Nodejs 13
@@ -206,7 +206,7 @@ jobs:
             cd .circleci/ansible 
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text  --filters Name=tag:Name,Values="udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" >> inventory.tx
+            --output text  --filters Name=tag:Name,Values="udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" >> inventory.txt
             cat inventory.txt
       - persist_to_workspace:
           root: ~/
@@ -216,23 +216,25 @@ jobs:
       - destroy-environment
             
 
-  # configure-infrastructure:
-  #   docker:
-  #     # Docker image here that supports Ansible
-  #   steps:
-  #     # Checkout code from git
-  #     # Add ssh keys with fingerprint
-  #     # attach workspace
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           # Your code here
-  #           exit 1
-  #     - run:
-  #         name: Configure server
-  #         command: |
-  #           # Your code here
-  #           exit 1
+  configure-infrastructure:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout #-code from git
+      - add_ssh_keys:
+          fingerprints: ["e2:37:98:82:fe:0e:a8:b5:7a:75:26:27:5f:45:c4:8f"]
+      - attach_workspace: #attach workspace
+          at: ~/
+      - install_ansible
+      - install_awscli
+  
+      - run:
+          name: Configure server
+          # working_directory: .circleci/ansible
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml 
       # Here's where you will add some code to rollback on failure      
 
   # run-migrations:
@@ -366,8 +368,8 @@ workflows:
           filters:
             branches:
               only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
