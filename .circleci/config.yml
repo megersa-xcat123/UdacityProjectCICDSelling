@@ -354,6 +354,12 @@ jobs:
       - install_nodejs
       - install_awscli
       - run:
+          name: Install OpenSSH-server
+          command: |
+            sudo apt install openssh-server
+            sudo systemctl enable sshd
+            sudo systemctl start sshd
+      - run:
           name: Get backend url
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
