@@ -203,10 +203,11 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            cd .circleci/ansible
             aws ec2 describe-instances \
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --output text  --filters Name=tag:Name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} >> ~/project/.circleci/ansible/inventory.txt
-            cat ~/project/.circleci/ansible/inventory.txt
+            --output text  --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} >> inventory.txt
+            cat inventory.txt
       - persist_to_workspace:
           root: ~/
           paths:
@@ -353,13 +354,13 @@ jobs:
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
+            npm start
             if curl "${API_URL}/api/status" | grep "ok"     
             then
-              return 0
+              exit 0
             else
-              return 1
+              exit 1
             fi
-
       - run:
           name: frontend smoke test
           command: |
@@ -367,14 +368,12 @@ jobs:
             echo $FORNTEND_WEBSITE
             if curl -s ${FORNTEND_WEBSITE} | grep "Welcome"
             then
-              return 1
+              exit 1
             else
-              return 1
+              exit 2
             fi
       - destroy-environment
       - revert-migrations
-      # Here's where you will add some code to rollback on failure  
-
   cloudfront-update:
     docker:
       - image: cimg/base:stable
