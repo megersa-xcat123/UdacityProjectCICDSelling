@@ -288,7 +288,7 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            # your code here
+            
             cd frontend
             npm install
             npm run build
