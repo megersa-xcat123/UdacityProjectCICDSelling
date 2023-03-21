@@ -363,11 +363,11 @@ jobs:
               --filters Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --output text )
             echo ${BACKEND_PUBLIC_IP}
-            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
+            export API_URL=http://${BACKEND_PUBLIC_IP}:3030
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
-            if curl "${API_URL}/api/status" | grep "ok"     
+            if curl -s $API_URL/api/status | grep "ok" -v     
             then
               exit 0
             else
@@ -384,8 +384,8 @@ jobs:
             else
               exit 1
             fi
-      # - destroy-environment
-      # - revert-migrations
+      - destroy-environment
+      - revert-migrations
   cloudfront-update:
     docker:
       - image: cimg/base:stable
