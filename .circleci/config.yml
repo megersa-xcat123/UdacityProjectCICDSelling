@@ -352,10 +352,6 @@ jobs:
       - install_nodejs
       - install_awscli
       - run:
-          name: Install OpenSSH-server
-          command: |
-            sudo apt install openssh-server
-      - run:
           name: Get backend url
           command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
@@ -367,7 +363,7 @@ jobs:
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
-            if curl -s $API_URL/api/status | grep "ok" -v     
+            if curl -s $API_URL/api/status | grep "ok"     
             then
               exit 0
             else
