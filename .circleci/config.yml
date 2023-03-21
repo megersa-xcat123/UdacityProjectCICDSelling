@@ -357,9 +357,6 @@ jobs:
           name: Install OpenSSH-server
           command: |
             sudo apt install openssh-server
-            sudo systemctl enable sshd
-            sudo systemctl start sshd
-            sudo systemctl status sshd
       - run:
           name: Get backend url
           command: |
@@ -389,8 +386,8 @@ jobs:
             else
               exit 1
             fi
-      - destroy-environment
-      - revert-migrations
+      # - destroy-environment
+      # - revert-migrations
   cloudfront-update:
     docker:
       - image: cimg/base:stable
