@@ -314,33 +314,33 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            cd backend
-            npm i
-            npm run build
-            cd ..
-            # Zip the directory
-            cd .circleci/ansible
-            mkdir files
-            cd files
-            tar -C ../../../backend -czvf artifact.tar.gz .
-            cd ../
-            echo "Contents  of the inventory.txt file is -------"
-            pwd
-            # cd .circleci/ansible
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml
-            
             # cd backend
             # npm i
             # npm run build
             # cd ..
             # # Zip the directory
-            # tar -C backend -czvf artifact.tar.gz .
-            # pwd
             # cd .circleci/ansible
+            # mkdir files
+            # cd files
+            # tar -C ../../../backend -czvf artifact.tar.gz .
+            # cd ../
             # echo "Contents  of the inventory.txt file is -------"
+            # pwd
+            # # cd .circleci/ansible
             # cat inventory.txt
             # ansible-playbook -i inventory.txt deploy-backend.yml
+            
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            pwd
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations
 
@@ -396,7 +396,7 @@ jobs:
                       list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                       --no-paginate --output text)
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            curl https://kvdb.io/HBKW1xeuJWBkLRHh9w1Dsq/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+            curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
             
       - run:
           name: Update cloudfront distribution
