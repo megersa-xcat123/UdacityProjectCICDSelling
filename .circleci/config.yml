@@ -345,7 +345,6 @@ jobs:
   smoke-test:
     docker:
       - image: cimg/base:stable
-      #  image: alpine:latest
     steps:
       - checkout
       - install_nodejs
