@@ -307,28 +307,14 @@ jobs:
       - install_awscli
       - install_ansible
       - run:
-          name: Install dependencies
-          command: |
-            cd backend
-            npm install
-
-      - run:
-          name:  package backend
-          command: |
-            cd backend
-            npm run build
-            tar -czf artifact.tar.gz dist/* package/*
-            cd ..
-            cp backend/artifact.tar.gz .circleci/ansible/roles/deploy/files
-      - run:
           name: Deploy backend
           command: |
-
-
-            export TYPEORM_MIGRATIONS_DIR=./src/migrations
-            export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity{.ts, .js}
-            export TYPEORM_MIGRATIONS=./src/migrations/*.ts
-          
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
@@ -375,7 +361,7 @@ jobs:
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
-            if curl  $API_URL/api/status | grep "ok" -v      
+            if curl  $API_URL/api/status | grep "ok"      
             then
               exit 0
             else
@@ -392,8 +378,8 @@ jobs:
             else
               exit 1
             fi
-      # - destroy-environment
-      # - revert-migrations
+      - destroy-environment
+      - revert-migrations
   cloudfront-update:
     docker:
       - image: cimg/base:stable
