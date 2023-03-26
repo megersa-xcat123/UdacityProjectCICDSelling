@@ -236,7 +236,7 @@ jobs:
    
   run-migrations:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - install_awscli
@@ -295,7 +295,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - add_ssh_keys:
@@ -343,7 +343,7 @@ jobs:
 #             --parameter-overrides WorkflowID=
   smoke-test:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - install_nodejs
