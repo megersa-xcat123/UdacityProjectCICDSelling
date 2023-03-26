@@ -20,7 +20,7 @@ commands:
       - run:
           name: Install NodeJS 13
           command: |
-            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
             sudo apt install -y nodejs
   
   install_awscli:
@@ -233,11 +233,10 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
                 
       - destroy-environment
-      #- revert-migrations
-
+   
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_awscli
