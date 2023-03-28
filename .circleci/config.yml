@@ -67,11 +67,10 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
           when: on_fail
           command: |
             SUCCESS=$(curl -s  https://kvdb.io/CCN99yR4rcomHLBctLoSr8/migration_<< parameters.workflow_id >>)
-            if(( $SUCCESS==1 )); 
+            if(( $SUCCESS==1 ))
             then
               cd ~/project/backend
               npm install
@@ -304,7 +303,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
       - add_ssh_keys:
@@ -339,9 +338,6 @@ jobs:
             # echo "Contents of the inventory.txt file is ............"
             # cat inventory.txt
             # ansible-playbook -i inventory.txt deploy-backend.yml
-
-
-
 
       - destroy-environment
       - revert-migrations
