@@ -28,7 +28,7 @@
     global: yes
     production: yes
     state: latest
-- name: "create backend end directory "
+- name: "create backend directory "
   file:
     path: /home/ubuntu/backend_app
     state: directory
@@ -36,16 +36,16 @@
 - name: "Copy artifacts into instance"
   become: yes
   copy: 
-    src: ~/project/artifact.tar.gz
+    src: files/artifact.tar.gz
     dest: /home/ubuntu/backend_app
 
 - name: "start server"
-  become: yes
+  become: true
   shell: |
     cd /home/ubuntu/backend_app
     tar xzvf artifact.tar.gz
-    npm install
-    npm run build
+    # npm install
+    # npm run build
     pm2 stop all
     pm2 start npm --name "backend_app"  -- start
   
