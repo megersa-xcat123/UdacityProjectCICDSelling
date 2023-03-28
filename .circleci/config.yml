@@ -355,7 +355,7 @@ jobs:
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
-            if curl --connect-timout 60 ${API_URL}/api/status | grep "ok"     
+            if curl --connect-timeout 60 ${API_URL}/api/status | grep "ok"     
             then
               return 0
             else
