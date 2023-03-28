@@ -17,26 +17,27 @@
 - name: "install nodejs and npm"
   become: yes
   apt:
-    name: ["nodejs", "npm"]
+    name: [nodejs, npm]
     state: latest
     update_cache: yes
+
 - name: "install pm2"
   become: yes
   npm:
     name: pm2
     global: yes
     production: yes
-    state: present
-- name: "create  backend end directory "
+    state: latest
+- name: "create backend end directory "
   file:
-    path: ~/backend_app
+    path: /home/ubuntu/backend_app
     state: directory
 
 - name: "Copy artifacts into instance"
   become: yes
   copy: 
     src: ~/project/artifact.tar.gz
-    dest: /home/ubuntu/backend_app/artifact.tar.gz
+    dest: /home/ubuntu/backend_app
 
 - name: "start server"
   become: yes
@@ -46,6 +47,5 @@
     npm install
     npm run build
     pm2 stop all
-    pm2 start npm -- start
-    
-
+    pm2 start npm --name "backend_app"  -- start
+  
