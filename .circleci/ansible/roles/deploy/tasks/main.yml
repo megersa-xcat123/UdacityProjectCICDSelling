@@ -1,50 +1,90 @@
----
-- name: "update apt packages."
-  become: yes
-  apt:
-    update_cache: yes
+# ---
+# - name: "update apt packages."
+#   become: yes
+#   apt:
+#     update_cache: yes
 
-- name: "upgrade packages"
-  become: yes
-  apt:
-    upgrade: yes
+# - name: "upgrade packages"
+#   become: yes
+#   apt:
+#     upgrade: yes
 
-- name: "remove dependencies that are no longer required"
-  become: yes
-  apt:
-    autoremove: yes
+# - name: "remove dependencies that are no longer required"
+#   become: yes
+#   apt:
+#     autoremove: yes
 
-- name: "install nodejs and npm"
-  become: yes
-  apt:
-    name: ["nodejs", "npm"]
-    state: latest
-    update_cache: yes
-- name: "install pm2"
-  become: yes
-  npm:
-    name: pm2
-    global: yes
-    production: yes
-    state: present
-- name: "create  backend end directory "
-  file:
-    path: ~/backend_app
-    state: directory
+# - name: "install nodejs and npm"
+#   become: yes
+#   apt:
+#     name: ["nodejs", "npm"]
+#     state: latest
+#     update_cache: yes
+# - name: "install pm2"
+#   become: yes
+#   npm:
+#     name: pm2
+#     global: yes
+#     production: yes
+#     state: present
+# - name: "create  backend end directory "
+#   file:
+#     path: ~/backend_app
+#     state: directory
 
-- name: "Copy artifacts into instance"
-  become: yes
-  copy: 
-    src: ~/project/artifact.tar.gz
-    dest: /home/ubuntu/backend_app/artifact.tar.gz
+# - name: "Copy artifacts into instance"
+#   become: yes
+#   copy: 
+#     src: ~/project/artifact.tar.gz
+#     dest: /home/ubuntu/backend_app/artifact.tar.gz
 
-- name: "start server"
-  become: yes
-  shell: |
-    cd /home/ubuntu/backend_app
-    tar xzvf artifact.tar.gz
-    npm install
-    npm run build
-    pm2 stop default
-    pm2 start npm -- start
+# - name: "start server"
+#   become: yes
+#   shell: |
+#     cd /home/ubuntu/backend_app
+#     tar xzvf artifact.tar.gz
+#     npm install
+#     npm run build
+#     pm2 stop default
+#     pm2 start -f ./main.js
     
+---
+  - name: "show remote environment"
+    shell: env
+
+  - name: "copy backend binaries"
+    become: yes
+    synchronize:
+      src: ../../backend/dist
+      dest: /home/ubuntu/uda_app
+      recursive: true
+
+  - name: "copy node_modules"
+    become: yes
+    synchronize:
+      src: ../../backend/node_modules
+      dest: /home/ubuntu/uda_app
+      recursive: true
+
+  - name: "delete anything that might already be running"
+    become: true
+    command: pm2 delete all
+    ignore_errors: true
+
+  - name: "start server"
+    become: true
+    command: pm2 start -f ./main.js
+    args:
+      chdir: /home/ubuntu/uda_app/dist
+    environment:
+     ENVIRONMENT: production
+     TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
+     TYPEORM_MIGRATIONS_DIR: "./migrations"
+     TYPEORM_MIGRATIONS: "./migrations/*.js"
+     TYPEORM_ENTITIES: "./modules/domain/**/*.entity.js"
+     TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST') }}"
+     TYPEORM_PORT: "{{ lookup('env', 'TYPEORM_PORT') }}"
+     TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME') }}"
+     TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD') }}"
+     TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE') }}"
+
