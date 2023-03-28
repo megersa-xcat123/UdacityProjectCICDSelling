@@ -257,7 +257,7 @@ jobs:
       - run:
           name: Send migration results to kvdb bucket
           command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            if grep -q " has been executed successfully." ~/project/backend/migrations_dump.txt
             then
              curl --insecure https://kvdb.io/CCN99yR4rcomHLBctLoSr8/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1' 
             fi
@@ -291,7 +291,6 @@ jobs:
       - run:
           name: Deploy frontend objects
           command: |
-            
             cd frontend
             npm install
             npm run build
@@ -302,7 +301,7 @@ jobs:
                     
   deploy-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
       - add_ssh_keys:
@@ -337,19 +336,11 @@ jobs:
             # echo "Contents of the inventory.txt file is ............"
             # cat inventory.txt
             # ansible-playbook -i inventory.txt deploy-backend.yml
-
-
-
-
       - destroy-environment
       - revert-migrations
-# udapeople-388142339351
-# aws cloudformation deploy \
-#             --template-file cloudfront.yml \
-#             --stack-name InitialStack\
-#             --parameter-overrides WorkflowID=
   smoke-test:
-    executor: python
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install_nodejs
@@ -358,25 +349,20 @@ jobs:
           name: Install dependencies
           working_directory: /tmp
           command: |
-            apk 
-            
-      - run:
-          name: Get backend url
-          command: |
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --output text )
             echo ${BACKEND_PUBLIC_IP}
-            export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
-            if curl  $API_URL/api/status | grep "ok"      
+            if curl "${API_URL}/api/status" | grep "ok"     
             then
-              exit 0
+              return 0
             else
-              exit 0
+              return 1
             fi
       - run:
           name: frontend smoke test
