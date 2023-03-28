@@ -44,8 +44,12 @@
   shell: |
     cd /home/ubuntu/backend_app
     tar xzvf artifact.tar.gz
-    # npm install
-    # npm run build
-    pm2 stop all
-    pm2 start npm --name "backend_app"  -- start
+    npm i
+    
+- name: "Executing Node App with pm2"
+  shell: |
+    cd /home/ubuntu/backend_app/dist
+    pm2 stop default
+    pm2 start main.js
+    # npm --name "backend_app"  -- start
   
